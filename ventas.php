@@ -4,7 +4,11 @@ session_start();
 if (!isset($_SESSION['usuario'])) {
     // No hay usuario logueado, redirige al login
     header("Location: index.php");
-    exit();
+    exit
+        // Evitar cache para que no se pueda usar flecha atrás para ver páginas protegidas
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies.
 }
 $serverName = "tcp:cafeteriahn.database.windows.net,1433";
 $connectionOptions = [
