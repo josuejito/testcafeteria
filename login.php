@@ -1,4 +1,6 @@
 <?php
+session_start(); // Necesario para guardar sesión de usuario
+
 // Validar que se haya enviado el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $usuario = $_POST['usuario'];
@@ -17,8 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    $sql = "SELECT * FROM Usuarios WHERE usuario = ? AND contrasena = ?";
-    $params = array($usuario, $contrasena);
+    // Consulta solo el usuario, sin verificar aún la contraseña
+    $sql = "SELECT * FROM Usuarios WHERE usuario = ?";
+    $params = array($usuario);
     $stmt = sqlsrv_query($conn, $sql, $params);
 
     if ($stmt === false) {
@@ -26,13 +29,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if (sqlsrv_has_rows($stmt)) {
-        // Redirigir a página protegida
-        header("Location: inventario.php");
-        exit();
+        $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+
+        // Verifica la contraseña con password_verify
+        if (password_verify($contrasena, $row['contrasena'])) {
+            $_SESSION['usuario'] = $usuario;
+            header("Location: inventario.php");
+            exit();
+        } else {
+            // Contraseña incorrecta
+            header("Location: index.php?error=1");
+            exit();
+        }
     } else {
-        // Regresar al login con mensaje de error
+        // Usuario no encontrado
         header("Location: index.php?error=1");
         exit();
     }
 }
 ?>
+
