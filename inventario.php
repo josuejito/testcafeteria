@@ -1,13 +1,16 @@
 <?php
-session_start(); // Inicia sesión
-if (!isset($_SESSION['usuario'])) {
-    header("Location: index.php");
-    exit();
-}
+session_start();
+
 // Evitar cache para que no se pueda usar flecha atrás para ver páginas protegidas
 header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
 header("Pragma: no-cache"); // HTTP 1.0.
 header("Expires: 0"); // Proxies.
+
+// Verificar sesión antes de mostrar contenido
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index.php");
+    exit();
+}
 $serverName = "tcp:cafeteriahn.database.windows.net,1433";
 $connectionOptions = [
     "Database" => "cafeteria",
