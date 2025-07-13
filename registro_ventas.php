@@ -46,7 +46,26 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     <meta charset="UTF-8">
     <title>Registro de Ventas</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        header {
+      background: #2c3e50;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+         nav {
+  background: #34495e;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block; /* Esto hace que los links estén en línea */
+}
         .factura {
             background: white; border: 1px solid #ccc; border-radius: 10px;
             padding: 20px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -60,7 +79,18 @@ while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
     </style>
 </head>
 <body>
-    <h1>Historial de Ventas</h1>
+<header><h1>Inventario de Productos</h1></header>
+
+  <nav>
+    <a href="inventario.php">Inicio</a>
+    <a href="agregar.php">Agregar Producto</a>
+    <a href="index.php">Cerrar Sesión</a>
+    <a href="ventas.php" class="btn btn-green">Registrar Venta</a>
+    <a href="registro_ventas.php" class="btn">Ver Facturas</a>
+  
+  </nav>
+    
+    <h2>Historial de Ventas</h2>
 
     <?php foreach ($facturas as $id => $factura): ?>
         <div class="factura">
