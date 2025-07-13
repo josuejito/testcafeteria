@@ -47,6 +47,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             border: none; border-radius: 5px; cursor: pointer;
         }
         a { text-decoration: none; color: #2980b9; display: block; margin-top: 15px; }
+        header {
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background: #34495e;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
     </style>
 </head>
 <body>
