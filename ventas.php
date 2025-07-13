@@ -1,3 +1,12 @@
+<?php
+$serverName = "tcp:cafeteriahn.database.windows.net,1433";
+$connectionOptions = [
+    "Database" => "cafeteria",
+    "Uid" => "josuejorge@cafeteriahn",
+    "PWD" => "Barcelona25"
+];
+$conn = sqlsrv_connect($serverName, $connectionOptions);
+if (!$conn) die(print_r(sqlsrv_errors(), true));
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $productos = $_POST['producto_id'];
     $cantidades = $_POST['cantidad'];
