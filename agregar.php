@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    // No hay usuario logueado, redirige al login
+    header("Location: index.php");
+    exit();
+}
 // Procesar si se envía el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = $_POST['nombre'];
@@ -71,7 +78,7 @@ nav a {
     </style>
 </head>
 <body>
-    <header><h1>Inventario de Productos</h1></header>
+    <header><h1>Agregar Productos</h1></header>
 
   <nav>
     <a href="inventario.php">Inicio</a>
