@@ -1,5 +1,9 @@
 <?php
 session_start(); // Necesario para guardar sesión de usuario
+// Evitar cache para que no se pueda usar flecha atrás para ver páginas protegidas
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies.
 
 // Validar que se haya enviado el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
