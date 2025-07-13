@@ -37,6 +37,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Agregar Producto</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; padding: 30px; }
+        nav {
+  background: #34495e;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block; /* Esto hace que los links estén en línea */
+}
+
         form { background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
         label { display: block; margin: 10px 0 5px; }
         input[type="text"], input[type="number"] {
@@ -53,17 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       padding: 20px;
       text-align: center;
     }
-    nav {
-      background: #34495e;
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
+    
     </style>
 </head>
 <body>
