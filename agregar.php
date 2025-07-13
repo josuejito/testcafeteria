@@ -50,6 +50,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </style>
 </head>
 <body>
+    <header><h1>Inventario de Productos</h1></header>
+
+  <nav>
+    <a href="inventario.php">Inicio</a>
+    <a href="agregar.php">Agregar Producto</a>
+    <a href="index.php">Cerrar Sesión</a>
+    <a href="ventas.php" class="btn btn-green">Registrar Venta</a>
+    <a href="registro_ventas.php" class="btn">Ver Facturas</a>
+  
+  </nav>
     <h2>Agregar Nuevo Producto</h2>
     <form method="POST">
         <label>Nombre:</label>
