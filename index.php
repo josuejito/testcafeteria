@@ -58,7 +58,7 @@
       color: white;
     }
     .error {
-      color: #ffaaaa;
+      color: red;
       font-size: 16px;
       margin-bottom: 10px;
     }
