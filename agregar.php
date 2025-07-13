@@ -6,6 +6,10 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
 }
+// Evitar cache para que no se pueda usar flecha atrás para ver páginas protegidas
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies.
 // Procesar si se envía el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $nombre = $_POST['nombre'];
