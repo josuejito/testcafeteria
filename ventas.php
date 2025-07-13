@@ -86,13 +86,32 @@ while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)) {
     <meta charset="UTF-8">
     <title>Registrar Venta</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; padding: 30px; }
+        body { font-family: Arial; background: #f4f4f4;  }
         form { background: white; padding: 20px; border-radius: 10px; max-width: 700px; margin: auto; }
         label, select, input[type="number"] { margin: 5px; display: inline-block; }
         .fila { margin-bottom: 10px; }
         .fila select, .fila input { width: 200px; }
         .add-btn { background: #3498db; color: white; padding: 5px 10px; border: none; border-radius: 5px; margin: 10px 0; cursor: pointer; }
         .submit-btn { background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
+   header {
+      background: #2c3e50;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+        nav {
+  background: #34495e;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block; /* Esto hace que los links estén en línea */
+}
     </style>
     <script>
         function agregarFila() {
@@ -105,6 +124,16 @@ while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)) {
     </script>
 </head>
 <body>
+    <header><h1>Inventario de Productos</h1></header>
+
+  <nav>
+    <a href="inventario.php">Inicio</a>
+    <a href="agregar.php">Agregar Producto</a>
+    <a href="index.php">Cerrar Sesión</a>
+    <a href="ventas.php" class="btn btn-green">Registrar Venta</a>
+    <a href="registro_ventas.php" class="btn">Ver Facturas</a>
+  
+  </nav>
     <h2>Registrar Venta (Múltiples Productos)</h2>
     <form method="POST">
         <div id="productos">
