@@ -69,11 +69,9 @@
     <form action="login.php" method="POST">
       <h1><i>Inicio de sesión</i></h1>
 
-      <?php
-        if (isset($_GET['error']) && $_GET['error'] == '1') {
-          echo '<div class="error">Usuario o contraseña incorrectos.</div>';
-        }
-      ?>
+      <?php if (isset($_GET['error']) && $_GET['error'] == 1): ?>
+        <div class="error">Usuario o contraseña incorrectos.</div>
+      <?php endif; ?>
 
       <div class="field">
         <i class="fas fa-user"></i>
