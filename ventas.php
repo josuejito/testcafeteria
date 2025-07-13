@@ -1,5 +1,4 @@
 <?php
-// Conexión
 $serverName = "tcp:cafeteriahn.database.windows.net,1433";
 $connectionOptions = [
     "Database" => "cafeteria",
@@ -9,32 +8,46 @@ $connectionOptions = [
 $conn = sqlsrv_connect($serverName, $connectionOptions);
 if (!$conn) die(print_r(sqlsrv_errors(), true));
 
-// Procesar formulario
+// Procesar formulario con múltiples productos
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $producto_id = $_POST['producto_id'];
-    $cantidad = $_POST['cantidad'];
+    $productos = $_POST['producto_id'];
+    $cantidades = $_POST['cantidad'];
 
-    // Obtener precio del producto
-    $stmt = sqlsrv_query($conn, "SELECT precio FROM Productos WHERE id = ?", [$producto_id]);
-    $producto = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-    $precio_unitario = $producto['precio'];
-    $total = $precio_unitario * $cantidad;
+    // Crear la factura
+    $facturaSQL = "INSERT INTO Facturas DEFAULT VALUES";
+    $facturaStmt = sqlsrv_query($conn, $facturaSQL);
+    if (!$facturaStmt) die(print_r(sqlsrv_errors(), true));
 
-    // Insertar venta
-    $sql = "INSERT INTO Ventas (producto_id, cantidad, total) VALUES (?, ?, ?)";
-    $params = [$producto_id, $cantidad, $total];
-    $stmt = sqlsrv_query($conn, $sql, $params);
+    // Obtener el ID de la factura recién creada
+    $facturaId = sqlsrv_query($conn, "SELECT SCOPE_IDENTITY() AS id");
+    $facturaRow = sqlsrv_fetch_array($facturaId, SQLSRV_FETCH_ASSOC);
+    $idFactura = $facturaRow['id'];
 
-    if ($stmt) {
-        header("Location: registro_ventas.php");
-        exit();
-    } else {
-        echo "Error al registrar venta.";
+    for ($i = 0; $i < count($productos); $i++) {
+        $idProducto = $productos[$i];
+        $cantidad = $cantidades[$i];
+
+        $precioSQL = "SELECT precio FROM Productos WHERE id = ?";
+        $stmt = sqlsrv_query($conn, $precioSQL, [$idProducto]);
+        $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
+        $precioUnitario = $row['precio'];
+        $total = $precioUnitario * $cantidad;
+
+        $insertVenta = "INSERT INTO Ventas (producto_id, cantidad, total, factura_id) VALUES (?, ?, ?, ?)";
+        $params = [$idProducto, $cantidad, $total, $idFactura];
+        sqlsrv_query($conn, $insertVenta, $params);
     }
+
+    header("Location: registro_ventas.php");
+    exit();
 }
 
-// Obtener productos para dropdown
+// Obtener productos
 $productos = sqlsrv_query($conn, "SELECT id, nombre FROM Productos");
+$productoOptions = [];
+while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)) {
+    $productoOptions[] = $p;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -43,31 +56,57 @@ $productos = sqlsrv_query($conn, "SELECT id, nombre FROM Productos");
     <title>Registrar Venta</title>
     <style>
         body { font-family: Arial; background: #f4f4f4; padding: 30px; }
-        form { background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; }
-        label { display: block; margin: 10px 0 5px; }
-        select, input[type="number"] {
-            width: 100%; padding: 8px; margin-bottom: 15px;
-        }
-        input[type="submit"] {
-            background: #27ae60; color: white; padding: 10px 20px;
-            border: none; border-radius: 5px; cursor: pointer;
-        }
+        form { background: white; padding: 20px; border-radius: 10px; max-width: 700px; margin: auto; }
+        label, select, input[type="number"] { margin: 5px; display: inline-block; }
+        .fila { margin-bottom: 10px; }
+        .fila select, .fila input { width: 200px; }
+        .add-btn { background: #3498db; color: white; padding: 5px 10px; border: none; border-radius: 5px; margin: 10px 0; cursor: pointer; }
+        .submit-btn { background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
     </style>
+    <script>
+        function agregarFila() {
+            const contenedor = document.getElementById("productos");
+            const div = document.createElement("div");
+            div.className = "fila";
+            div.innerHTML = `<?= generarFilaJS($productoOptions) ?>`;
+            contenedor.appendChild(div);
+        }
+    </script>
 </head>
 <body>
-    <h2>Registrar Venta</h2>
+    <h2>Registrar Venta (Múltiples Productos)</h2>
     <form method="POST">
-        <label>Producto:</label>
-        <select name="producto_id" required>
-            <?php while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)): ?>
-                <option value="<?= $p['id'] ?>"><?= $p['nombre'] ?></option>
-            <?php endwhile; ?>
-        </select>
-
-        <label>Cantidad:</label>
-        <input type="number" name="cantidad" required>
-
-        <input type="submit" value="Registrar Venta">
+        <div id="productos">
+            <div class="fila">
+                <?= generarFilaHTML($productoOptions) ?>
+            </div>
+        </div>
+        <button type="button" class="add-btn" onclick="agregarFila()">+ Agregar otro producto</button><br>
+        <input type="submit" value="Registrar Venta" class="submit-btn">
     </form>
 </body>
 </html>
+
+<?php
+// Función que genera select y input para HTML
+function generarFilaHTML($productos) {
+    $html = '<select name="producto_id[]">';
+    foreach ($productos as $p) {
+        $html .= "<option value='{$p['id']}'>{$p['nombre']}</option>";
+    }
+    $html .= '</select>';
+    $html .= '<input type="number" name="cantidad[]" min="1" required>';
+    return $html;
+}
+
+// Función que devuelve el HTML como JS string para JavaScript
+function generarFilaJS($productos) {
+    $html = '<select name="producto_id[]">';
+    foreach ($productos as $p) {
+        $html .= "<option value=\\\"{$p['id']}\\\">{$p['nombre']}</option>";
+    }
+    $html .= '</select>';
+    $html .= '<input type=\\\"number\\\" name=\\\"cantidad[]\\\" min=\\\"1\\\" required>';
+    return $html;
+}
+?>
