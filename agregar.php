@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <title>Agregar Producto</title>
     <style>
-        body { font-family: Arial; background: #f4f4f4; padding: 30px; }
+        body { font-family: Arial; background: #f4f4f4;  }
         nav {
   background: #34495e;
   padding: 10px;
