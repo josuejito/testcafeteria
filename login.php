@@ -25,7 +25,7 @@ if ($stmt === false) {
 
 if (sqlsrv_has_rows($stmt)) {
     // Login exitoso, redirigir a YouTube
-    header("Location: https://www.youtube.com");
+    header("Location: rocio.html");
     exit();
 } else {
     echo "Usuario o contraseña incorrectos.";
