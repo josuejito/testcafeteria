@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    // No hay usuario logueado, redirige al login
+    header("Location: index.php");
+    exit();
+}
 $serverName = "tcp:cafeteriahn.database.windows.net,1433";
 $connectionOptions = [
     "Database" => "cafeteria",
@@ -79,7 +86,7 @@ nav a {
     </style>
 </head>
 <body>
-<header><h1>Inventario de Productos</h1></header>
+<header><h1>Facturas</h1></header>
 
   <nav>
     <a href="inventario.php">Inicio</a>
