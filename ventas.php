@@ -23,22 +23,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $idFactura = $facturaRow['id'];
 
     for ($i = 0; $i < count($productos); $i++) {
-        // Validar entrada
         if (!isset($productos[$i]) || !isset($cantidades[$i]) || $cantidades[$i] <= 0) continue;
 
         $idProducto = (int)$productos[$i];
         $cantidad = (int)$cantidades[$i];
 
-        // Obtener precio
-        $precioSQL = "SELECT precio FROM Productos WHERE id = ?";
+        // Obtener precio y cantidad disponible
+        $precioSQL = "SELECT precio, cantidad AS stock FROM Productos WHERE id = ?";
         $precioStmt = sqlsrv_query($conn, $precioSQL, [$idProducto]);
         if (!$precioStmt || !sqlsrv_has_rows($precioStmt)) continue;
 
         $row = sqlsrv_fetch_array($precioStmt, SQLSRV_FETCH_ASSOC);
         $precioUnitario = floatval($row['precio']);
-        $total = $precioUnitario * $cantidad;
+        $stockDisponible = (int)$row['stock'];
 
         sqlsrv_free_stmt($precioStmt);
+
+        // Verificar stock suficiente
+        if ($cantidad > $stockDisponible) {
+            echo "❌ No hay suficiente inventario para el producto ID $idProducto<br>";
+            continue;
+        }
+
+        $total = $precioUnitario * $cantidad;
 
         // Insertar venta
         $insertVenta = "INSERT INTO Ventas (producto_id, cantidad, total, factura_id) VALUES (?, ?, ?, ?)";
@@ -48,10 +55,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!$insertStmt) {
             echo "Error al registrar producto ID $idProducto<br>";
             print_r(sqlsrv_errors());
+            continue;
+        }
+
+        // Actualizar inventario
+        $updateStockSQL = "UPDATE Productos SET cantidad = cantidad - ? WHERE id = ?";
+        $stockStmt = sqlsrv_query($conn, $updateStockSQL, [$cantidad, $idProducto]);
+
+        if (!$stockStmt) {
+            echo "❌ Error al actualizar inventario para el producto ID $idProducto<br>";
+            print_r(sqlsrv_errors());
         }
     }
 
-    // Redirigir después de insertar
+    // Redirigir
     header("Location: registro_ventas.php");
     exit();
 }
@@ -102,7 +119,6 @@ while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)) {
 </html>
 
 <?php
-// Función para HTML inicial
 function generarFilaHTML($productos) {
     $html = '<select name="producto_id[]">';
     foreach ($productos as $p) {
@@ -113,7 +129,6 @@ function generarFilaHTML($productos) {
     return $html;
 }
 
-// Función para insertar dinámicamente con JS
 function generarFilaJS($productos) {
     $html = "<select name='producto_id[]'>";
     foreach ($productos as $p) {
@@ -121,6 +136,7 @@ function generarFilaJS($productos) {
     }
     $html .= "</select>";
     $html .= "<input type='number' name='cantidad[]' min='1' required>";
-    return addslashes($html); // 🔒 Escapa para JS
+    return addslashes($html);
 }
 ?>
+
