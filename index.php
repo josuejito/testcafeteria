@@ -3,21 +3,18 @@
 <head>
   <title>Login</title>
   <meta charset="UTF-8">
-  <!-- Enlace a Font Awesome para los íconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     h1 {
       text-align: center;
       color: whitesmoke;
     }
-
     body {
       background: linear-gradient(135deg, #b6b5c0, #d9dfdf);
       background-attachment: fixed;
       overflow-x: hidden;
       font-family: 'Segoe UI', sans-serif;
     }
-
     .container {
       max-width: 600px;
       margin: 80px auto;
@@ -28,9 +25,8 @@
       box-shadow: 0 8px 32px rgba(0,0,0,0.2);
       text-align: center;
       color: white;
-      border: 2px solid #3b9fdc; /* Borde azul que combina */
+      border: 2px solid #3b9fdc;
     }
-
     input[type="text"],
     input[type="password"] {
       padding: 10px;
@@ -39,7 +35,6 @@
       width: 60%;
       margin-left: 10px;
     }
-
     input[type="submit"] {
       margin-top: 20px;
       padding: 10px 20px;
@@ -51,43 +46,46 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-
     input[type="submit"]:hover {
       background-color: #2c83b3;
     }
-
     .field {
       margin: 20px 0;
       font-size: 18px;
     }
-
     .field i {
       margin-right: 10px;
       color: white;
     }
-
-    img {
-      width: 100px;
-      margin-bottom: 20px;
+    .error {
+      color: #ffaaaa;
+      font-size: 16px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <form action="login.php" method="POST">
-        
       <h1><i>Inicio de sesión</i></h1>
-      
+
+      <?php
+        if (isset($_GET['error']) && $_GET['error'] == '1') {
+          echo '<div class="error">Usuario o contraseña incorrectos.</div>';
+        }
+      ?>
+
       <div class="field">
         <i class="fas fa-user"></i>
-        <input type="text" name="usuario" placeholder="Usuario">
+        <input type="text" name="usuario" placeholder="Usuario" required>
       </div>
       <div class="field">
         <i class="fas fa-lock"></i>
-        <input type="password" name="contraseña" placeholder="Contraseña">
+        <input type="password" name="contraseña" placeholder="Contraseña" required>
       </div>
       <input type="submit" value="Enviar">
     </form>
   </div>
 </body>
 </html>
+
