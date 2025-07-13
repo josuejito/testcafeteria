@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (sqlsrv_has_rows($stmt)) {
         // Redirigir a página protegida
-        header("Location: rocio.html");
+        header("Location: inventario.php");
         exit();
     } else {
         // Regresar al login con mensaje de error
