@@ -22,28 +22,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $idFactura = $facturaRow['id'];
 
     for ($i = 0; $i < count($productos); $i++) {
-        $idProducto = (int)$productos[$i];
-        $cantidad = (int)$cantidades[$i];
+    $idProducto = (int)$productos[$i];
+    $cantidad = (int)$cantidades[$i];
 
-        // Obtener precio
-        $precioSQL = "SELECT precio FROM Productos WHERE id = ?";
-        $stmt = sqlsrv_query($conn, $precioSQL, [$idProducto]);
-        if (!$stmt || !sqlsrv_has_rows($stmt)) continue;
+    // Obtener precio
+    $precioSQL = "SELECT precio FROM Productos WHERE id = ?";
+    $precioStmt = sqlsrv_query($conn, $precioSQL, [$idProducto]);
+    if (!$precioStmt || !sqlsrv_has_rows($precioStmt)) continue;
 
-        $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
-        $precioUnitario = floatval($row['precio']);
-        $total = $precioUnitario * $cantidad;
+    $row = sqlsrv_fetch_array($precioStmt, SQLSRV_FETCH_ASSOC);
+    $precioUnitario = floatval($row['precio']);
+    $total = $precioUnitario * $cantidad;
 
-        // Insertar venta
-        $insertVenta = "INSERT INTO Ventas (producto_id, cantidad, total, factura_id) VALUES (?, ?, ?, ?)";
-        $params = [$idProducto, $cantidad, $total, $idFactura];
-        $insertStmt = sqlsrv_query($conn, $insertVenta, $params);
+    sqlsrv_free_stmt($precioStmt); // 🔑 Aquí liberamos para evitar conflicto en la siguiente vuelta
 
-        if (!$insertStmt) {
-            echo "Error al registrar producto ID $idProducto<br>";
-            print_r(sqlsrv_errors());
-        }
+    // Insertar venta
+    $insertVenta = "INSERT INTO Ventas (producto_id, cantidad, total, factura_id) VALUES (?, ?, ?, ?)";
+    $params = [$idProducto, $cantidad, $total, $idFactura];
+    $insertStmt = sqlsrv_query($conn, $insertVenta, $params);
+
+    if (!$insertStmt) {
+        echo "Error al registrar producto ID $idProducto<br>";
+        print_r(sqlsrv_errors());
     }
+}
+
 
     // Redirigir después de insertar todo
     header("Location: registro_ventas.php");
