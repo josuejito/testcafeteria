@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    // Consulta solo el usuario, sin verificar aún la contraseña
+    // Consulta solo el usuario
     $sql = "SELECT * FROM Usuarios WHERE usuario = ?";
     $params = array($usuario);
     $stmt = sqlsrv_query($conn, $sql, $params);
@@ -31,21 +31,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (sqlsrv_has_rows($stmt)) {
         $row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC);
 
-        // Verifica la contraseña con password_verify
-        if (password_verify($contrasena, $row['contrasena'])) {
+        // ⚠️ Comparación directa (para pruebas)
+        if ($contrasena === $row['contrasena']) {
             $_SESSION['usuario'] = $usuario;
             header("Location: inventario.php");
             exit();
         } else {
-            // Contraseña incorrecta
-            header("Location: index.php?error=1");
+            header("Location: index.php?error=1"); // Contraseña incorrecta
             exit();
         }
     } else {
-        // Usuario no encontrado
-        header("Location: index.php?error=1");
+        header("Location: index.php?error=1"); // Usuario no encontrado
         exit();
     }
 }
 ?>
+
 
