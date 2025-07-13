@@ -71,7 +71,7 @@ $stmt = sqlsrv_query($conn, $sql);
   <nav>
     <a href="inventario.php">Inicio</a>
     <a href="agregar.php">Agregar Producto</a>
-    <a href="logout.php">Cerrar Sesión</a>
+    <a href="index.php">Cerrar Sesión</a>
     <a href="ventas.php" class="btn btn-green">Registrar Venta</a>
     <a href="registro_ventas.php" class="btn">Ver Facturas</a>
   
