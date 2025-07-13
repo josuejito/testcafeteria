@@ -1,4 +1,10 @@
 <?php
+session_start(); // Inicia sesión
+if (!isset($_SESSION['usuario'])) {
+    header("Location: index.php");
+    exit();
+}
+
 $serverName = "tcp:cafeteriahn.database.windows.net,1433";
 $connectionOptions = [
     "Database" => "cafeteria",
@@ -74,7 +80,6 @@ $stmt = sqlsrv_query($conn, $sql);
     <a href="cerrar_sesion.php">Cerrar Sesión</a>
     <a href="ventas.php" class="btn btn-green">Registrar Venta</a>
     <a href="registro_ventas.php" class="btn">Ver Facturas</a>
-  
   </nav>
 
   <div class="container">
@@ -109,3 +114,4 @@ $stmt = sqlsrv_query($conn, $sql);
   </div>
 </body>
 </html>
+
