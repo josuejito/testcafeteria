@@ -7,6 +7,7 @@ $connectionOptions = [
 ];
 $conn = sqlsrv_connect($serverName, $connectionOptions);
 if (!$conn) die(print_r(sqlsrv_errors(), true));
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $productos = $_POST['producto_id'];
     $cantidades = $_POST['cantidad'];
@@ -22,33 +23,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $idFactura = $facturaRow['id'];
 
     for ($i = 0; $i < count($productos); $i++) {
-    $idProducto = (int)$productos[$i];
-    $cantidad = (int)$cantidades[$i];
+        // Validar entrada
+        if (!isset($productos[$i]) || !isset($cantidades[$i]) || $cantidades[$i] <= 0) continue;
 
-    // Obtener precio
-    $precioSQL = "SELECT precio FROM Productos WHERE id = ?";
-    $precioStmt = sqlsrv_query($conn, $precioSQL, [$idProducto]);
-    if (!$precioStmt || !sqlsrv_has_rows($precioStmt)) continue;
+        $idProducto = (int)$productos[$i];
+        $cantidad = (int)$cantidades[$i];
 
-    $row = sqlsrv_fetch_array($precioStmt, SQLSRV_FETCH_ASSOC);
-    $precioUnitario = floatval($row['precio']);
-    $total = $precioUnitario * $cantidad;
+        // Obtener precio
+        $precioSQL = "SELECT precio FROM Productos WHERE id = ?";
+        $precioStmt = sqlsrv_query($conn, $precioSQL, [$idProducto]);
+        if (!$precioStmt || !sqlsrv_has_rows($precioStmt)) continue;
 
-    sqlsrv_free_stmt($precioStmt); // 🔑 Aquí liberamos para evitar conflicto en la siguiente vuelta
+        $row = sqlsrv_fetch_array($precioStmt, SQLSRV_FETCH_ASSOC);
+        $precioUnitario = floatval($row['precio']);
+        $total = $precioUnitario * $cantidad;
 
-    // Insertar venta
-    $insertVenta = "INSERT INTO Ventas (producto_id, cantidad, total, factura_id) VALUES (?, ?, ?, ?)";
-    $params = [$idProducto, $cantidad, $total, $idFactura];
-    $insertStmt = sqlsrv_query($conn, $insertVenta, $params);
+        sqlsrv_free_stmt($precioStmt);
 
-    if (!$insertStmt) {
-        echo "Error al registrar producto ID $idProducto<br>";
-        print_r(sqlsrv_errors());
+        // Insertar venta
+        $insertVenta = "INSERT INTO Ventas (producto_id, cantidad, total, factura_id) VALUES (?, ?, ?, ?)";
+        $params = [$idProducto, $cantidad, $total, $idFactura];
+        $insertStmt = sqlsrv_query($conn, $insertVenta, $params);
+
+        if (!$insertStmt) {
+            echo "Error al registrar producto ID $idProducto<br>";
+            print_r(sqlsrv_errors());
+        }
     }
-}
 
-
-    // Redirigir después de insertar todo
+    // Redirigir después de insertar
     header("Location: registro_ventas.php");
     exit();
 }
@@ -79,7 +82,7 @@ while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)) {
             const contenedor = document.getElementById("productos");
             const div = document.createElement("div");
             div.className = "fila";
-            div.innerHTML = `<?= generarFilaJS($productoOptions) ?>`;
+            div.innerHTML = '<?= generarFilaJS($productoOptions) ?>';
             contenedor.appendChild(div);
         }
     </script>
@@ -99,7 +102,7 @@ while ($p = sqlsrv_fetch_array($productos, SQLSRV_FETCH_ASSOC)) {
 </html>
 
 <?php
-// Función que genera select y input para HTML
+// Función para HTML inicial
 function generarFilaHTML($productos) {
     $html = '<select name="producto_id[]">';
     foreach ($productos as $p) {
@@ -110,14 +113,14 @@ function generarFilaHTML($productos) {
     return $html;
 }
 
-// Función que devuelve el HTML como JS string para JavaScript
+// Función para insertar dinámicamente con JS
 function generarFilaJS($productos) {
-    $html = '<select name="producto_id[]">';
+    $html = "<select name='producto_id[]'>";
     foreach ($productos as $p) {
-        $html .= "<option value=\\\"{$p['id']}\\\">{$p['nombre']}</option>";
+        $html .= "<option value='{$p['id']}'>{$p['nombre']}</option>";
     }
-    $html .= '</select>';
-    $html .= '<input type=\\\"number\\\" name=\\\"cantidad[]\\\" min=\\\"1\\\" required>';
-    return $html;
+    $html .= "</select>";
+    $html .= "<input type='number' name='cantidad[]' min='1' required>";
+    return addslashes($html); // 🔒 Escapa para JS
 }
 ?>
