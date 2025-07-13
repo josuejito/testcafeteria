@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Para mi Melón</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #ffc2d1);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      text-align: center;
+      color: #8b0a50;
+    }
+
+    .title {
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .photo {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid white;
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .phrase {
+      font-size: 20px;
+      margin: 15px 0;
+      animation: fadeIn 3s ease-in-out;
+    }
+
+    @keyframes floatHeart {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 30px;
+      animation: floatHeart 6s infinite;
+      opacity: 0;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #bb1252;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- corazones flotando -->
+  <div class="heart" style="left: 10%; animation-delay: 1s;">💖</div>
+  <div class="heart" style="left: 30%; animation-delay: 2s;">❤️</div>
+  <div class="heart" style="left: 50%; animation-delay: 3s;">💘</div>
+  <div class="heart" style="left: 70%; animation-delay: 4s;">💕</div>
+  <div class="heart" style="left: 90%; animation-delay: 5s;">💞</div>
+
+  <div class="container">
+    <div class="title">Para mi corazon completo 💕</div>
+    <img src="melon.jpeg" alt="Mi melón bella" class="photo" />
+    
+    <div class="phrase">"Desde que te vi, supe que eras mi destino."</div>
+    <div class="phrase">"Cada día contigo es un poema de amor."</div>
+    <div class="phrase">"Eres mi alegría, mi calma y mi locura hermosa."</div>
+
+    <div class="footer">Hecho con 💗 por alguien que te piensa todos los días.</div>
+  </div>
+
+</body>
+</html>
